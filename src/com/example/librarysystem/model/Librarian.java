@@ -3,8 +3,8 @@ package com.example.librarysystem.model;
 public class Librarian extends AbstractPerson {
     private String employeeNumber;
 
-    public Librarian(String id, String name, String employeeNumber) {
-        super(id, name);
+    public Librarian(String id, String name, String username, String password, String employeeNumber) {
+        super(id, name, username, password);
         this.employeeNumber = employeeNumber;
     }
 

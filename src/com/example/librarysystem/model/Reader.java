@@ -7,8 +7,8 @@ public class Reader extends AbstractPerson {
     private static final int MAX_BORROW_LIMIT = 5;
     private Set<Book> borrowedBooks;
 
-    public Reader(String id, String name) {
-        super(id, name);
+    public Reader(String id, String name, String username, String password) {
+        super(id, name, username, password);
         borrowedBooks = new HashSet<>();
     }
 

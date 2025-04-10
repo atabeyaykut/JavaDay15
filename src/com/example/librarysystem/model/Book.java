@@ -37,6 +37,6 @@ public class Book {
     }
 
     public void setBorrowed(boolean borrowed) {
-        this.isBorrowed = borrowed;
+        isBorrowed = borrowed;
     }
 }

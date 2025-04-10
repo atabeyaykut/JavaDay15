@@ -18,6 +18,7 @@ public class LibraryService {
         invoices = new HashMap<>();
     }
 
+    // Public method to get the single instance.
     public static synchronized LibraryService getInstance() {
         if (instance == null) {
             instance = new LibraryService();
@@ -25,6 +26,22 @@ public class LibraryService {
         return instance;
     }
 
+    // Kullanıcı ekleme metotları
+    public void addReader(Reader reader) {
+        if (readers.containsKey(reader.getId())) {
+            System.out.println("Okuyucu zaten mevcut: " + reader.getName());
+        } else {
+            readers.put(reader.getId(), reader);
+            System.out.println(reader.getName() + " sisteme eklendi.");
+        }
+    }
+
+    public void addLibrarian(Librarian librarian) {
+        librarians.add(librarian);
+        System.out.println("Kütüphaneci eklendi: " + librarian.getName());
+    }
+
+    // Kitap işlemleri
     public void addBook(Book book) {
         if (books.containsKey(book.getId())) {
             System.out.println("Kitap zaten mevcut: " + book.getTitle());
@@ -77,24 +94,9 @@ public class LibraryService {
         }
     }
 
-    public void addReader(Reader reader) {
-        if (readers.containsKey(reader.getId())) {
-            System.out.println("Okuyucu zaten mevcut: " + reader.getName());
-        } else {
-            readers.put(reader.getId(), reader);
-            System.out.println(reader.getName() + " sisteme eklendi.");
-        }
-    }
-
-    public void addLibrarian(Librarian librarian) {
-        librarians.add(librarian);
-        System.out.println("Kütüphaneci eklendi: " + librarian.getName());
-    }
-
     public void borrowBook(String bookId, String readerId) throws LibraryException {
         Book book = books.get(bookId);
         Reader reader = readers.get(readerId);
-
         if (book == null) {
             throw new LibraryException("Kitap bulunamadı: " + bookId);
         }
@@ -107,7 +109,7 @@ public class LibraryService {
         boolean success = reader.borrowBook(book);
         if (success) {
             String invoiceId = "INV-" + UUID.randomUUID().toString().substring(0, 8);
-            double amount = calculateRentalFee(book); // Örneğin sabit ücret belirlenmiştir.
+            double amount = calculateRentalFee(book);
             Invoice invoice = new StandardInvoice(invoiceId, reader, book, amount);
             invoices.put(invoiceId, invoice);
             invoice.pay();
@@ -158,5 +160,25 @@ public class LibraryService {
             }
         }
         return result;
+    }
+
+    // Kullanıcı listesi: Yöneticilerin kullanıcı bilgilerini görebilmesi için
+    public Collection<Reader> getAllReaders() {
+        return readers.values();
+    }
+
+    // Login metodu: Kullanıcı adı ve şifre ile giriş yapılır.
+    public AbstractPerson login(String username, String password) throws LibraryException {
+        for (Librarian librarian : librarians) {
+            if (librarian.getUsername().equals(username) && librarian.getPassword().equals(password)) {
+                return librarian;
+            }
+        }
+        for (Reader reader : readers.values()) {
+            if (reader.getUsername().equals(username) && reader.getPassword().equals(password)) {
+                return reader;
+            }
+        }
+        throw new LibraryException("Geçersiz kullanıcı adı veya şifre.");
     }
 }
